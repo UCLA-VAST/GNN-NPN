@@ -36,7 +36,7 @@ class OrderedData(Data):
         self.is_rc = is_rc
     
     def __inc__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key or 'face' in key or key in ('PIs', 'POs'):
             return self.num_nodes
         else:
             return 0

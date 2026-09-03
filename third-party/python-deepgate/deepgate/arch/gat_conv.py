@@ -4,7 +4,6 @@ from typing import Optional
 from torch import Tensor
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import softmax
-from torch_geometric.nn.glob import *
 from torch_geometric.nn import MessagePassing
 
 from .mlp import MLP

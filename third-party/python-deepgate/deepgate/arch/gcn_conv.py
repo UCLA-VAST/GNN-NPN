@@ -7,8 +7,6 @@ import torch_geometric as tg
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import softmax
 from torch_geometric.utils import add_self_loops, degree
-from torch_scatter import scatter_add
-from torch_geometric.nn.glob import *
 from torch_geometric.nn import MessagePassing
 
 

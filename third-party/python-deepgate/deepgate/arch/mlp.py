@@ -3,6 +3,7 @@ import torch.nn as nn
 
 _norm_layer_factory = {
     'batchnorm': nn.BatchNorm1d,
+    'layernorm': nn.LayerNorm,
 }
 
 _act_layer_factory = {

@@ -112,12 +112,8 @@ class NpzParser():
 class AigParser():
     def __init__(self):
         pass
-    
-    def read_aiger(self, aig_path):
-        circuit_name = os.path.basename(aig_path).split('.')[0]
-        # tmp_aag_path = os.path.join(self.tmp_dir, '{}.aag'.format(circuit_name))
-        x_data, edge_index = aig_to_xdata(aig_path)
-        # os.remove(tmp_aag_path)
+
+    def from_xdata(self, x_data, edge_index):
         # Construct graph object 
         x_data = np.array(x_data)
         edge_index = np.array(edge_index)
@@ -129,13 +125,20 @@ class AigParser():
         graph = parse_pyg_mlpgate(
             x_data, edge_index, tt_dis, tt_pair_index, prob, rc_pair_index, is_rc
         )
-        graph.name = circuit_name
         graph.PIs = graph.forward_index[(graph['forward_level'] == 0) & (graph['backward_level'] != 0)]
         graph.POs = graph.backward_index[(graph['backward_level'] == 0) & (graph['forward_level'] != 0)]
         graph.no_connect = graph.forward_index[(graph['forward_level'] == 0) & (graph['backward_level'] == 0)]
-        
-        return graph        
-        
+        return graph
+
+    def read_aiger(self, aig_path):
+        circuit_name = os.path.basename(aig_path).split('.')[0]
+        # tmp_aag_path = os.path.join(self.tmp_dir, '{}.aag'.format(circuit_name))
+        x_data, edge_index = aig_to_xdata(aig_path)
+        # os.remove(tmp_aag_path)
+        graph = self.from_xdata(x_data, edge_index)
+        graph.name = circuit_name
+        return graph
+
 class BenchParser():
     def __init__(self, gate_to_index={'PI': 0, 'AND': 1, 'NOT': 2}):
         self.gate_to_index = gate_to_index

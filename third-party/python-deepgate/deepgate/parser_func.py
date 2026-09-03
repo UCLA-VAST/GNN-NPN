@@ -26,7 +26,7 @@ class OrderedData(Data):
         self.is_rc = is_rc
     
     def __inc__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key or 'face' in key or key in ('PIs', 'POs'):
             return self.num_nodes
         else:
             return 0
@@ -44,10 +44,8 @@ def parse_pyg_mlpgate(x, edge_index, tt_dis, tt_pair_index, \
                       num_gate_types=3):
     x_torch = construct_node_feature(x, num_gate_types)
 
-    tt_pair_index = torch.tensor(tt_pair_index, dtype=torch.long)
-    tt_pair_index = tt_pair_index.t().contiguous()
-    rc_pair_index = torch.tensor(rc_pair_index, dtype=torch.long)
-    rc_pair_index = rc_pair_index.t().contiguous()
+    tt_pair_index = torch.tensor(tt_pair_index, dtype=torch.long).t().contiguous() if len(tt_pair_index) else None
+    rc_pair_index = torch.tensor(rc_pair_index, dtype=torch.long).t().contiguous() if len(rc_pair_index) else None
     tt_dis = torch.tensor(tt_dis)
     is_rc = torch.tensor(is_rc, dtype=torch.float32).unsqueeze(1)
 
@@ -77,6 +75,8 @@ def parse_pyg_mlpgate(x, edge_index, tt_dis, tt_pair_index, \
     # add indices for gate types
     graph.gate = torch.tensor(x[:, 1:2], dtype=torch.float)
     graph.prob = torch.tensor(y).reshape((len(x), 1))
+
+    graph.batch = torch.zeros(len(x), dtype=torch.long)
 
     return graph
 
