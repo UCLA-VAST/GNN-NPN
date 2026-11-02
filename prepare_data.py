@@ -12,14 +12,14 @@ def run_cut_aig(aig_path: Path, out_base: Path, cut_size: int) -> int:
     aig_dir.mkdir(parents=True)
 
     n = cut_aig(str(aig_path), str(aig_dir), cut_size)
-    print(f"[{name}] {n} subcircuits")
+    print(f"[{name}-{cut_size}b] {n} cuts generated")
     return n
 
 def run_rewrite_aig(out_base: Path, cut_size: int) -> int:
     name = out_base.name
     aig_dir = out_base / str(cut_size) / "aig"
     if not aig_dir.is_dir():
-        print(f"[{name}] aig/ not found — run cut_aig first")
+        print(f"[{name}-{cut_size}b] aig/ not found — run cut_aig first")
         return 0
 
     out_dir = out_base / str(cut_size) / "aig_rewriting"
@@ -32,14 +32,14 @@ def run_rewrite_aig(out_base: Path, cut_size: int) -> int:
         rewrite_aig(str(aig_path), str(out_dir / aig_path.name))
 
     n = len(aig_files)
-    print(f"[{name}] {n} rewritten")
+    print(f"[{name}-{cut_size}b] {n} cuts rewritten")
     return n
 
 def run_simulate_tt(out_base: Path, cut_size: int) -> int:
     name = out_base.name
     aig_dir = out_base / str(cut_size) / "aig"
     if not aig_dir.is_dir():
-        print(f"[{name}] aig/ not found — run cut_aig first")
+        print(f"[{name}-{cut_size}b] aig/ not found — run cut_aig first")
         return 0
 
     truth_dir = out_base / str(cut_size) / "truth"
@@ -51,7 +51,7 @@ def run_simulate_tt(out_base: Path, cut_size: int) -> int:
         (truth_dir / f"{aig_path.stem}.txt").write_text(tt + "\n")
 
     n = len(aig_files)
-    print(f"[{name}] {n} truth tables simulated")
+    print(f"[{name}-{cut_size}b] {n} truth tables simulated")
     return n
 
 def main():

@@ -42,7 +42,7 @@ class EPFLDataset(Dataset):
         self.root = root
         self.num_bit = num_bit
         self._action_fn = get_action_fn(include_action)
-        self._post_proc_fn = get_action_fn(post_proc) if post_proc else None
+        self._post_proc_fn = get_action_fn(post_proc)
         self.rewriting = rewriting
 
         # Load AIG files

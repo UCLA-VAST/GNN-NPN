@@ -1,0 +1,43 @@
+seed: 42
+num_workers: 16
+load: null
+dataset:
+  - cls: random
+    name: "random_6bit"
+    num_bit: 6
+    num_train: 400000
+    num_eval: 4000
+    num_test: 4000
+    mean_nodes: 7.0
+    std_nodes: 2.0
+    action: null
+    rewriting: false
+agent:
+  num_rounds: 3
+  dim_hidden: 128
+  enable_reverse: true
+  enable_layernorm: true
+supervised:
+  train_steps: 10000
+  batch_size: 64
+  lr: 2e-5
+  grad_clip: 1.0
+  log_interval: 100
+  eval_interval: 1000
+  dir: "runs/random/6bit/supervised"
+reinforcement:
+  batch_size: 64
+  group_size: 16
+  temp: 1.0
+  post_proc: sifting_npn
+  grpo:
+    train_steps: 10000
+    raw_reward: true
+    num_epoch: 4
+    clip_eps: 0.2
+    ent_coef: 0.0001
+    lr: 2e-5
+    grad_clip: 1.0
+    log_interval: 100
+    eval_interval: 1000
+    dir: "runs/random/6bit/grpo"

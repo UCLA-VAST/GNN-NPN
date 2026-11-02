@@ -3,7 +3,6 @@ import os
 import random
 import sys
 import warnings
-import yaml
 
 import torch
 from torch.utils.data import random_split, Subset, ConcatDataset
@@ -31,7 +30,8 @@ def main():
                 f"Override key {key!r} is not present in {sys.argv[2]}; "
                 "check for a typo (it will be added as a new key)."
             )
-        OmegaConf.update(cfg, key, yaml.safe_load(value), merge=True)
+        value = OmegaConf.from_dotlist([f"value={value}"]).value
+        OmegaConf.update(cfg, key, value, merge=True)
     print(f"Running command {cmd} with config: {cfg}")
 
     random.seed(cfg.seed)
@@ -99,7 +99,8 @@ def main():
 
     # uniquify-truth-tables uses the dataset to collect unique truth tables, no agent is needed
     if cmd == "uniquify-truth-tables":
-        unique_tts, unique_indices = collect_unique_truth_tables(full_dataset)
+        assert len(full_datasets) == 1, "uniquify-truth-tables only supports a single dataset"
+        unique_tts, unique_indices = collect_unique_truth_tables(full_datasets[0])
         with open(cfg.npn.truth_table_path, "w") as f:
             for tt in unique_tts:
                 f.write(tt + "\n")
@@ -119,7 +120,7 @@ def main():
     # supervised learning
     if cmd == "test-supervised":
         for name, test_dataset in test_datasets:
-            print(f"Test set '{name}':")
+            print(f"Test supervised '{name}':")
             eval_supervised(agent, test_dataset, device, cfg.supervised)
     elif cmd == "train-supervised":
         os.makedirs(cfg.supervised.dir, exist_ok=True)
@@ -129,7 +130,7 @@ def main():
     # reinforcement learning
     elif cmd == "test-reinforcement":
         for name, test_dataset in test_datasets:
-            print(f"Test set '{name}':")
+            print(f"Test reinforcement '{name}':")
             eval_reinforcement(agent, test_dataset, device, cfg.reinforcement)
     elif cmd == "train-grpo":
         os.makedirs(cfg.reinforcement.grpo.dir, exist_ok=True)
